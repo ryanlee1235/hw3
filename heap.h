@@ -64,12 +64,9 @@ private:
   /// Add whatever helper functions and data members you need below
   std::vector<T> heapVec;
   void heapify(int index); // custom heapify function
-  void trickleUp(int index);
-  int mAry;
-  PComparator comp;
-
-
-
+  void trickleUp(int index); // custom trickleUp function
+  int mAry; // tracking the m-ary of heap
+  PComparator comp; // custom functor support
 };
 
 // Add implementation of member functions here
@@ -173,29 +170,33 @@ size_t Heap<T,PComparator>::size() const
 template <typename T, typename PComparator>
 void Heap<T,PComparator>::heapify(int index)
 {
-    int betterChild = mAry * index + 1;
-    if(betterChild >= (int)heapVec.size())
+  // grabs left-most child
+  int betterChild = mAry * index + 1;
+  // if child is out of index it is a leaf
+  if(betterChild >= (int)heapVec.size())
+  {
+    return;
+  }
+  int newChild = betterChild;
+  // iterate to support any m-Ary tree
+  for(int i = 0; i < (mAry - 1); i++)
+  {
+    newChild = newChild + 1;
+    if(newChild < (int)heapVec.size())
     {
-        return;
-    }
-    int newChild = betterChild;
-    for(int i = 0; i < (mAry - 1); i++)
-    {
-      newChild = newChild + 1;
-      if(newChild < (int)heapVec.size())
+      // custom comparator
+      if(comp(heapVec[newChild], heapVec[betterChild]))
       {
-          if(comp(heapVec[newChild], heapVec[betterChild]))
-          {
-              betterChild = newChild;
-          }
+          betterChild = newChild;
       }
     }
+  }
 
-    if(comp(heapVec[betterChild], heapVec[index]))
-    {
-        std::swap(heapVec[index], heapVec[betterChild]);
-        heapify(betterChild);
-    }
+  if(comp(heapVec[betterChild], heapVec[index]))
+  {
+    std::swap(heapVec[index], heapVec[betterChild]);
+    heapify(betterChild);
+  }
 }
 
 template <typename T, typename PComparator>
