@@ -178,9 +178,10 @@ void Heap<T,PComparator>::heapify(int index)
     {
         return;
     }
-    for(int i = 0; i < mAry; i++)
+    int newChild = betterChild;
+    for(int i = 0; i < (mAry - 1); i++)
     {
-      int newChild = betterChild + 1;
+      newChild = newChild + 1;
       if(newChild < (int)heapVec.size())
       {
           if(comp(heapVec[newChild], heapVec[betterChild]))
@@ -190,7 +191,7 @@ void Heap<T,PComparator>::heapify(int index)
       }
     }
 
-    if(heapVec[index] < heapVec[betterChild])
+    if(comp(heapVec[betterChild], heapVec[index]))
     {
         std::swap(heapVec[index], heapVec[betterChild]);
         heapify(betterChild);
@@ -201,11 +202,11 @@ template <typename T, typename PComparator>
 void Heap<T,PComparator>::trickleUp(int index)
 {
   int parent = (index - 1) / mAry;
-  if(comp(heapVec[index], heapVec[parent]))
+  if(comp(heapVec[parent], heapVec[index]))
   {
     return;
   }
-  if(parent >= 0 && (heapVec[parent] > heapVec[index]))
+  if(parent >= 0 && comp(heapVec[index],heapVec[parent]))
   {
     std::swap(heapVec[index], heapVec[parent]);
     trickleUp(parent);
